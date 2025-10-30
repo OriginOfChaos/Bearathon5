@@ -2,9 +2,8 @@ from json import dump as json_dump, load as json_load
 from PySide6.QtGui import QAction, QIcon
 from PySide6.QtWidgets import (QMainWindow, QGroupBox, QFileDialog, QMenuBar, QMenu, QFormLayout,
                                 QPushButton, QSizePolicy, QGridLayout, QDialog, QDialogButtonBox,
-                                QSpinBox, QCheckBox, QLabel, QMessageBox, QToolBar, QVBoxLayout, QLineEdit)
+                                QSpinBox, QCheckBox, QLabel, QMessageBox, QToolBar, QLineEdit)
 from os import path as os_path
-
 
 from bingo import Bingo
 
@@ -13,6 +12,7 @@ class App(QMainWindow):
         super().__init__()
 
         self.bingo = Bingo("", 0, False, False)
+        self.prev_bingo = Bingo.copy(self.bingo)
         self.save_file = ""
         self.replaceMode = False
 
@@ -45,19 +45,24 @@ class App(QMainWindow):
         
         # Create menus
         fileMenu = QMenu("&File", self)
+        editMenu = QMenu("&Edit", self)
         
         # Add menus to menubar
         menuBar.addMenu(fileMenu)
+        menuBar.addMenu(editMenu)
 
         # Create actions
         fileNew = QAction("&New", self)
         fileNew.triggered.connect(self.fileNew)
         fileOpen = QAction("&Open", self)
         fileOpen.triggered.connect(self.fileOpen)
+        editUndo = QAction("&Undo", self)
+        editUndo.triggered.connect(self.editUndo)
 
         # Add actions to menus
         fileMenu.addActions([fileNew,
                              fileOpen])
+        editMenu.addActions([editUndo])
 
         self.setMenuBar(menuBar)
 
@@ -83,6 +88,7 @@ class App(QMainWindow):
             else:
                 self.save_file = output["save_file"]
                 self.bingo = Bingo(output["list_file"], output["size"], output["pokemon"])
+                self.prev_bingo = Bingo.copy(self.bingo)
                 self.save()
                 self.updateBingoUI()
 
@@ -102,6 +108,7 @@ class App(QMainWindow):
                 grid_status = data["grid_status"]
                 self.bingo = Bingo.fromSave(list_file, size, pokemon, grid, grid_status)
                 self.save_file = fileName
+                self.prev_bingo = Bingo.copy(self.bingo)
                 self.updateBingoUI()
             except Exception as e:
                 msg = QMessageBox()
@@ -109,6 +116,14 @@ class App(QMainWindow):
                 msg.setWindowTitle("Couldn't read file.")
                 msg.setText(str(e))
                 msg.exec()
+
+    def editUndo(self):
+        """
+        Reverts to the previous bingo state. (Only 1 previous state gets saved!)
+        """
+        if self.prev_bingo.active:
+            self.bingo = Bingo.copy(self.prev_bingo)
+            self.updateBingoUI()
 
     ###########
     # Toolbar #
@@ -137,6 +152,7 @@ class App(QMainWindow):
     
     def toolShuffle(self):
         if self.bingo.active:
+            self.prev_bingo = Bingo.copy(self.bingo)
             self.bingo.shuffle()
             self.save()
             self.updateBingoUI()
@@ -157,8 +173,9 @@ class App(QMainWindow):
 
     def toolNewPoke(self):
         if self.bingo.active and self.bingo.pokemon_bool:
-            dlg = replaceSquare()
+            dlg = replaceSquareDialog()
             if dlg.exec():
+                self.prev_bingo = Bingo.copy(self.bingo)
                 random, new_poke = dlg.output()
                 self.bingo.replace(int(self.bingo.size/2), int(self.bingo.size/2), random, new_poke)
                 self.updateBingoUI()
@@ -171,7 +188,7 @@ class App(QMainWindow):
         """
         Saves the current file.
         """
-        if self.bingo:
+        if self.bingo.active:
             bingo_dict = self.bingo.toDict()
             with open(self.save_file, "w") as f:
                 json_dump(bingo_dict, f, indent=1)
@@ -203,8 +220,9 @@ class App(QMainWindow):
             for j, square in enumerate(row):
                 if sender == square:
                     if self.replaceMode:
-                        dlg = replaceSquare()
+                        dlg = replaceSquareDialog()
                         if dlg.exec():
+                            self.prev_bingo = Bingo.copy(self.bingo)
                             random, newGoal = dlg.output()
                             self.bingo.replace(i, j, random, newGoal)
                             self.updateBingoUI()
@@ -277,12 +295,12 @@ class newBingoSetupDialog(QDialog):
                 "pokemon": self.pokemon.isChecked(),
                 "save_file": self.save_file}
     
-class replaceSquare(QDialog):
+class replaceSquareDialog(QDialog):
     def __init__(self) -> None:
         super().__init__()
         
         self.setWindowIcon(QIcon("resources/icon.png"))
-        self.setWindowTitle("New Bingo Setup")
+        self.setWindowTitle("Replace")
 
         buttonBox = QDialogButtonBox(QDialogButtonBox.StandardButton.Ok | QDialogButtonBox.StandardButton.Cancel)
         buttonBox.accepted.connect(self.accept)

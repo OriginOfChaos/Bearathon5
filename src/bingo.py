@@ -1,5 +1,6 @@
 from csv import reader as csv_reader
 from random import randint
+from typing import Self
 
 class Bingo:
     def __init__(self, list_file: str, size: int, pokemon: bool, active: bool=True):
@@ -19,11 +20,15 @@ class Bingo:
             self.populate()
 
     @classmethod
-    def fromSave(cls, list_file: str, size: int, pokemon: bool, grid: list, grid_status: list):
-        bingo = cls(list_file, size, pokemon)
+    def fromSave(cls, list_file: str, size: int, pokemon: bool, grid: list, grid_status: list, active: bool=True):
+        bingo = cls(list_file, size, pokemon, active)
         bingo.grid = grid
         bingo.grid_status = grid_status
         return bingo
+    
+    @classmethod
+    def copy(cls, bingo: Self):
+        return cls.fromSave(bingo.list_file, bingo.size, bingo.pokemon_bool, bingo.grid, bingo.grid_status, bingo.active)
     
     def toDict(self) -> dict:
         return {"list_file": self.list_file,
