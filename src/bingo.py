@@ -3,7 +3,7 @@ from random import randint
 from typing import Self
 
 class Bingo:
-    def __init__(self, list_file: str, size: int, pokemon: bool, active: bool=True):
+    def __init__(self, list_file: str, size: int, pokemon: bool, active: bool=True, populate: bool=True):
         self.list_file = list_file
         self.size = size
         self.pokemon_bool = pokemon
@@ -14,21 +14,18 @@ class Bingo:
         self.list = []
         self.pokemon_list = []
         self.current_pokemon = ""
-        if list_file:
+        if active:
             self.import_pokemon_list("resources/pokemon.csv")
             self.update_list(list_file)
-            self.populate()
+            if populate:
+                self.populate()
 
     @classmethod
     def fromSave(cls, list_file: str, size: int, pokemon: bool, grid: list, grid_status: list, active: bool=True):
-        bingo = cls(list_file, size, pokemon, active)
+        bingo = cls(list_file, size, pokemon, active, populate=False)
         bingo.grid = grid
         bingo.grid_status = grid_status
         return bingo
-    
-    @classmethod
-    def copy(cls, bingo: Self):
-        return cls.fromSave(bingo.list_file, bingo.size, bingo.pokemon_bool, bingo.grid, bingo.grid_status, bingo.active)
     
     def toDict(self) -> dict:
         return {"list_file": self.list_file,
@@ -45,14 +42,19 @@ class Bingo:
             reader = csv_reader(f, delimiter='µ')   # Just make sure the list doesn't have any 'µ' in it.
             for row in reader:
                 self.list.append(row[0])
+        self.list_file = file
 
-    def populate(self) -> None:
+    def populate(self, keep_unlocked: bool=False) -> None:
         """
         Randomly populates the bingo with items from the list.
         """
         list_copy = []
         for item in self.list:
             list_copy.append(item)
+
+        self.grid = []
+        if not keep_unlocked:
+            self.grid_status = []
 
         for i in range(self.size):
             row = []
@@ -63,7 +65,8 @@ class Bingo:
                     row.append(self.current_pokemon)
                 else:
                     row.append(list_copy.pop(randint(0, len(list_copy)-1)))
-                row_status.append(0)
+                if not keep_unlocked:
+                    row_status.append(0)
             self.grid.append(row)
             self.grid_status.append(row_status)
 
@@ -94,12 +97,9 @@ class Bingo:
         pokemon = ""
         pokemon_status = 0
         for i, row in enumerate(self.grid):
-            if not grid_list:
-                grid_list = row
-                grid_status_list = self.grid_status[i]
-            else:
-                grid_list.extend(row)
-                grid_status_list.extend(self.grid_status[i])
+            for j, item in enumerate(row):
+                grid_list.append(item)
+                grid_status_list.append(self.grid_status[i][j])
         if self.pokemon_bool:
             pokemon = grid_list.pop(int((self.size**2)/2))
             pokemon_status = grid_status_list.pop(int((self.size**2)/2))
