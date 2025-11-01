@@ -1,6 +1,5 @@
 from csv import reader as csv_reader
 from random import randint
-from typing import Self
 
 class Bingo:
     def __init__(self, list_file: str, size: int, pokemon: bool, active: bool=True, populate: bool=True):

@@ -1,9 +1,11 @@
 from copy import deepcopy
 from json import dump as json_dump, load as json_load
+from PySide6.QtCore import Qt
 from PySide6.QtGui import QAction, QIcon
 from PySide6.QtWidgets import (QMainWindow, QGroupBox, QFileDialog, QMenuBar, QMenu, QFormLayout,
                                 QPushButton, QSizePolicy, QGridLayout, QDialog, QDialogButtonBox,
-                                QSpinBox, QCheckBox, QLabel, QMessageBox, QToolBar, QLineEdit)
+                                QSpinBox, QCheckBox, QLabel, QMessageBox, QToolBar, QLineEdit,
+                                QHBoxLayout)
 from os import path as os_path
 
 from bingo import Bingo
@@ -166,11 +168,14 @@ class App(QMainWindow):
         replace.triggered.connect(self.toolReplace)
         new_poke = QAction("&New Pokemon", self)
         new_poke.triggered.connect(self.toolNewPoke)
+        wipe = QAction("&Wipe the board", self)
+        wipe.triggered.connect(self.toolWipe)
 
         # Add actions to toolbar
         toolBar.addActions([shuffle,
                             replace,
-                            new_poke])
+                            new_poke,
+                            wipe])
 
         self.addToolBar(toolBar)
     
@@ -204,6 +209,18 @@ class App(QMainWindow):
                 self.bingo.replace(int(self.bingo.size/2), int(self.bingo.size/2), random, new_poke)
                 self.updateBingoUI()
 
+    def toolWipe(self):
+        if self.bingo.active:
+            msg = QMessageBox()
+            msg.setIcon(QMessageBox.Icon.Warning)
+            msg.setWindowTitle("Warning")
+            msg.setText("Are you sure you want to wipe the board?")
+            msg.setStandardButtons(QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
+            if msg.exec() == QMessageBox.StandardButton.Yes:
+                self.prev_bingo = deepcopy(self.bingo)
+                self.bingo.populate()
+                self.updateBingoUI()
+
     ########
     # Misc #
     ########
@@ -226,8 +243,13 @@ class App(QMainWindow):
         for i in range(self.bingo.size):
             row = []
             for j in range(self.bingo.size):
-                square = QPushButton(self.bingo.grid[i][j])
+                square = QPushButton()
                 square.setSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
+                label = QLabel(self.bingo.grid[i][j], square)
+                label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+                label.setWordWrap(True)
+                squareLayout = QHBoxLayout(square)
+                squareLayout.addWidget(label)
                 square.clicked.connect(self.squarePress)
                 if self.bingo.grid_status[i][j] == 1:
                     square.setStyleSheet("background-color: green")

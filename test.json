@@ -1,0 +1,79 @@
+{
+ "list_file": "C:/Users/jolan.van.passel/Documents/GitHub/Bearathon5/THE LIST.csv",
+ "size": 5,
+ "pokemon": true,
+ "grid": [
+  [
+   "Win a game of Mario Party",
+   "Complete an Any% (LJW)",
+   "Complete an Any% (LTH)",
+   "Defeat Snatcher (HiT)",
+   "x3840 in any game"
+  ],
+  [
+   "Fly in 3 games",
+   "Take down 14 different monsters with 14 different weapons",
+   "Kill Ripto",
+   "Roll sacred fire from metronome",
+   "2 Time Pieces from Time Rifts"
+  ],
+  [
+   "Score 3 goals in a match",
+   "Max affection",
+   "Floragato",
+   "Complete an Any% (LM2)",
+   "Win The Superbowl as a rookie in Career Mode"
+  ],
+  [
+   "collect 50 moons",
+   "Complete an Any% (tcs)",
+   "Gym HM only",
+   "Soft lock a game of your choice on the current save. Must pick a game where it can be soft locked",
+   "Unlock all characters in any lego game"
+  ],
+  [
+   "6000+ photoscore one picture",
+   "Middle Earth Musical",
+   "Kill the Enderdragon",
+   "Win against 3 level 9 cpus",
+   "Die from poison, hunger, damage, heat and cold in peak."
+  ]
+ ],
+ "grid_status": [
+  [
+   1,
+   0,
+   0,
+   0,
+   0
+  ],
+  [
+   0,
+   1,
+   0,
+   0,
+   0
+  ],
+  [
+   0,
+   0,
+   1,
+   0,
+   0
+  ],
+  [
+   0,
+   0,
+   0,
+   1,
+   0
+  ],
+  [
+   0,
+   0,
+   0,
+   0,
+   1
+  ]
+ ]
+}
