@@ -103,7 +103,8 @@ class Bingo:
         grid_list = []
         for i, row in enumerate(self.grid):
             for j, item in enumerate(row):
-                grid_list.append(item)
+                if not (self.pokemon_bool and i == j and i == int(self.size/2)):
+                    grid_list.append(item)
         
         self.grid = []
 
@@ -119,7 +120,7 @@ class Bingo:
 
     def replace(self, i: int, j: int, random: bool, new_goal: str="") -> None:
         """
-        Replaces the cell at the given coordinates with either a random other objective from the list or a given one. The status is set to 0.
+        Replaces the cell at the given coordinates with either a random other uncompleted objective from the list or a given one. This new one gets added to the list.
         """
         if random:
             if self.pokemon_bool and i == j and i == int(self.size/2):   # middle square
@@ -128,12 +129,13 @@ class Bingo:
             else:
                 old_goal = self.grid[i][j]
                 new_goal = old_goal
-                while new_goal == old_goal:
+                while new_goal == old_goal or self.list[new_goal] == 1:
                     new_goal = random_choice(list(self.list.keys()))
-        else:
+        elif new_goal:
             # Add goal to list
             self.list[new_goal] = 0
-        self.grid[i][j] = new_goal
+        if new_goal:
+            self.grid[i][j] = new_goal
 
     def reset(self) -> None:
         """

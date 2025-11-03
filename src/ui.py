@@ -85,6 +85,7 @@ class App(QMainWindow):
             msg = QMessageBox()
             msg.setIcon(QMessageBox.Icon.Warning)
             msg.setWindowTitle("Warning")
+            msg.setWindowIcon(QIcon("resources/icon.ico"))
             if not output["list_file"]:
                 msg.setText("Objectives List File missing!")
                 msg.exec()
@@ -124,6 +125,7 @@ class App(QMainWindow):
                 msg = QMessageBox()
                 msg.setIcon(QMessageBox.Icon.Warning)
                 msg.setWindowTitle("Couldn't read file.")
+                msg.setWindowIcon(QIcon("resources/icon.ico"))
                 msg.setText(str(e))
                 msg.exec()
     
@@ -232,11 +234,13 @@ class App(QMainWindow):
             msg = QMessageBox()
             msg.setIcon(QMessageBox.Icon.Warning)
             msg.setWindowTitle("Warning")
+            msg.setWindowIcon(QIcon("resources/icon.ico"))
             msg.setText("Are you sure you want to reset?\nYou will lose all objective progress.")
             msg.setStandardButtons(QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
             if msg.exec() == QMessageBox.StandardButton.Yes:
                 self.prev_bingo = deepcopy(self.bingo)
                 self.bingo.reset()
+                self.save()
                 self.updateBingoUI()
 
     ########
@@ -467,6 +471,7 @@ class manageListDialog(QDialog):
         self.remove_goal.setEditable(True)
         self.remove_goal.setInsertPolicy(QComboBox.InsertPolicy.NoInsert)
         self.remove_goal.addItems(self.form_dict.keys())
+        self.remove_goal.clearEditText()
         remove_layout.addRow("Remove:", self.remove_goal)
         remove = QPushButton("Remove")
         remove.pressed.connect(self.remove)
@@ -507,6 +512,7 @@ class manageListDialog(QDialog):
                 msg = QMessageBox()
                 msg.setIcon(QMessageBox.Icon.Warning)
                 msg.setWindowTitle("Warning")
+                msg.setWindowIcon(QIcon("resources/icon.ico"))
                 msg.setText("Objective not found. Nothing was removed.")
                 msg.exec()
 
