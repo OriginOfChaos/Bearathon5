@@ -5,7 +5,8 @@ from PySide6.QtGui import QAction, QIcon
 from PySide6.QtWidgets import (QMainWindow, QGroupBox, QFileDialog, QMenuBar, QMenu, QFormLayout,
                                 QPushButton, QSizePolicy, QGridLayout, QDialog, QDialogButtonBox,
                                 QSpinBox, QCheckBox, QLabel, QMessageBox, QToolBar, QLineEdit,
-                                QHBoxLayout, QWidget, QScrollArea, QVBoxLayout, QTabWidget, QComboBox)
+                                QHBoxLayout, QWidget, QScrollArea, QVBoxLayout, QTabWidget, QComboBox,
+                                QRadioButton)
 from os import path as os_path
 
 from bingo import Bingo
@@ -14,7 +15,7 @@ class App(QMainWindow):
     def __init__(self):
         super().__init__()
 
-        self.bingo = Bingo("", 0, False, False)
+        self.bingo = Bingo(0, False, False)
         self.prev_bingo = deepcopy(self.bingo)
         self.save_file = ""
         self.replaceMode = False
@@ -210,11 +211,12 @@ class App(QMainWindow):
 
     def toolNewPoke(self):
         if self.bingo.active and self.bingo.pokemon_bool:
-            dlg = replaceSquareDialog()
+            dlg = replacePokeDialog(self.bingo.pokemon_list)
             if dlg.exec():
                 self.prev_bingo = deepcopy(self.bingo)
                 random, new_poke = dlg.output()
                 self.bingo.replace(int(self.bingo.size/2), int(self.bingo.size/2), random, new_poke)
+                self.save()
                 self.updateBingoUI()
 
     def toolWipe(self):
@@ -294,13 +296,20 @@ class App(QMainWindow):
             for j, square in enumerate(row):
                 if sender == square:
                     if self.replaceMode:
-                        dlg = replaceSquareDialog()
-                        if dlg.exec():
-                            self.prev_bingo = deepcopy(self.bingo)
-                            random, newGoal = dlg.output()
-                            self.bingo.replace(i, j, random, newGoal)
-                            self.updateBingoUI()
-                        self.replaceMode = False
+                        if not (self.bingo.pokemon_bool and i == j and i == int(self.bingo.size/2)):
+                            dlg = replaceSquareDialog(self.bingo.list, self.bingo.grid)
+                            if dlg.exec():
+                                self.prev_bingo = deepcopy(self.bingo)
+                                random, newGoal = dlg.output()
+                                self.bingo.replace(i, j, random, newGoal)
+                            self.replaceMode = False
+                        else:
+                            dlg = replacePokeDialog(self.bingo.pokemon_list)
+                            if dlg.exec():
+                                self.prev_bingo = deepcopy(self.bingo)
+                                random, new_poke = dlg.output()
+                                self.bingo.replace(int(self.bingo.size/2), int(self.bingo.size/2), random, new_poke)
+                        self.updateBingoUI()
                     else:
                         if not (self.bingo.pokemon_bool and i == j and i == int(self.bingo.size/2)):
                             if self.bingo.list[self.bingo.grid[i][j]] == 0:
@@ -377,12 +386,12 @@ class newBingoSetupDialog(QDialog):
                 "pokemon": self.pokemon.isChecked(),
                 "save_file": self.save_file}
     
-class replaceSquareDialog(QDialog):
-    def __init__(self) -> None:
+class replacePokeDialog(QDialog):
+    def __init__(self, poke_list: list):
         super().__init__()
         
         self.setWindowIcon(QIcon("resources/icon.ico"))
-        self.setWindowTitle("Replace")
+        self.setWindowTitle("Change Pokemon")
 
         buttonBox = QDialogButtonBox(QDialogButtonBox.StandardButton.Ok | QDialogButtonBox.StandardButton.Cancel)
         buttonBox.accepted.connect(self.accept)
@@ -390,11 +399,16 @@ class replaceSquareDialog(QDialog):
 
         layout = QFormLayout(self)
 
-        self.random = QCheckBox(self)
-        layout.addRow("Random:", self.random)
-        self.newGoal = QLineEdit(self)
-        self.newGoal.setEnabled(True)
-        layout.addRow("New Objective if not random:", self.newGoal)
+        self.random = QRadioButton("Random:", self)
+        layout.addWidget(self.random)
+        self.chooseGoal_check = QRadioButton("Choose Pokemon:", self)
+        layout.addWidget(self.chooseGoal_check)
+        self.choose_goal = QComboBox(self)
+        self.choose_goal.setEditable(True)
+        self.choose_goal.setInsertPolicy(QComboBox.InsertPolicy.NoInsert)
+        self.choose_goal.addItems(poke_list)
+        self.choose_goal.clearEditText()
+        layout.addWidget(self.choose_goal)
         
         layout.addWidget(buttonBox)
 
@@ -402,7 +416,63 @@ class replaceSquareDialog(QDialog):
         """
         Returns a bool for random in 1 and new goal if not random in 2.
         """
-        return self.random.isChecked(), self.newGoal.text()
+        if self.random.isChecked():
+            return True, ""
+        elif self.chooseGoal_check.isChecked():
+            return False, self.choose_goal.currentText()
+        else:
+            return False, ""
+
+class replaceSquareDialog(QDialog):
+    def __init__(self, obj_list: dict, grid: list):
+        super().__init__()
+
+        grid_list = []
+        for row in grid:
+            for obj in row:
+                grid_list.append(obj)
+        
+        self.setWindowIcon(QIcon("resources/icon.ico"))
+        self.setWindowTitle("Replace Objective")
+
+        buttonBox = QDialogButtonBox(QDialogButtonBox.StandardButton.Ok | QDialogButtonBox.StandardButton.Cancel)
+        buttonBox.accepted.connect(self.accept)
+        buttonBox.rejected.connect(self.reject)
+
+        layout = QVBoxLayout(self)
+
+        self.random = QRadioButton("Random:", self)
+        layout.addWidget(self.random)
+        self.chooseGoal_check = QRadioButton("Choose existing objective:", self)
+        layout.addWidget(self.chooseGoal_check)
+        self.choose_goal = QComboBox(self)
+        self.choose_goal.setEditable(True)
+        self.choose_goal.setInsertPolicy(QComboBox.InsertPolicy.NoInsert)
+        for key in obj_list:
+            if obj_list[key] == 0 and not grid_list.__contains__(key):
+                self.choose_goal.addItem(key)
+        self.choose_goal.clearEditText()
+        layout.addWidget(self.choose_goal)
+        self.newGoal_check = QRadioButton("New objective:", self)
+        layout.addWidget(self.newGoal_check)
+        self.newGoal = QLineEdit(self)
+        self.newGoal.setEnabled(True)
+        layout.addWidget(self.newGoal)
+        
+        layout.addWidget(buttonBox)
+
+    def output(self) -> tuple[bool, str]:
+        """
+        Returns a bool for random in 1 and new goal if not random in 2.
+        """
+        if self.random.isChecked():
+            return True, ""
+        elif self.chooseGoal_check.isChecked():
+            return False, self.choose_goal.currentText()
+        elif self.newGoal_check.isChecked():
+            return False, self.newGoal.text()
+        else:
+            return False, ""
     
 class manageListDialog(QDialog):
     def __init__(self, obj_list: dict):
@@ -470,7 +540,7 @@ class manageListDialog(QDialog):
         self.remove_goal = QComboBox()
         self.remove_goal.setEditable(True)
         self.remove_goal.setInsertPolicy(QComboBox.InsertPolicy.NoInsert)
-        self.remove_goal.addItems(self.form_dict.keys())
+        self.remove_goal.addItems(list(self.form_dict.keys()))
         self.remove_goal.clearEditText()
         remove_layout.addRow("Remove:", self.remove_goal)
         remove = QPushButton("Remove")

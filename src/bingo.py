@@ -131,10 +131,10 @@ class Bingo:
                 new_goal = old_goal
                 while new_goal == old_goal or self.list[new_goal] == 1:
                     new_goal = random_choice(list(self.list.keys()))
-        elif new_goal:
-            # Add goal to list
-            self.list[new_goal] = 0
         if new_goal:
+            if not new_goal in self.list:
+                # Add goal to list
+                self.list[new_goal] = 0
             self.grid[i][j] = new_goal
 
     def reset(self) -> None:
