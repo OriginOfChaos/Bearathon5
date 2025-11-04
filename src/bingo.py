@@ -1,74 +1,82 @@
+from copy import deepcopy
 from csv import reader as csv_reader
-from random import randint
-from typing import Self
+from random import randint, choice as random_choice
 
 class Bingo:
-    def __init__(self, list_file: str, size: int, pokemon: bool, active: bool=True, populate: bool=True):
-        self.list_file = list_file
+    def __init__(self, size: int, pokemon: bool, active: bool=True, new: bool=True, list_file: str=""):
         self.size = size
         self.pokemon_bool = pokemon
         self.active = active
 
         self.grid = []
-        self.grid_status = []   # 0 = not completed, 1 = completed, >1 = custom status
-        self.list = []
+        self.list = {}
         self.pokemon_list = []
         self.current_pokemon = ""
+        self.pokemon_status = 0
         if active:
             self.import_pokemon_list("resources/pokemon.csv")
-            self.update_list(list_file)
-            if populate:
+            if new:
+                self.import_list(list_file)
                 self.populate()
 
     @classmethod
-    def fromSave(cls, list_file: str, size: int, pokemon: bool, grid: list, grid_status: list, active: bool=True):
-        bingo = cls(list_file, size, pokemon, active, populate=False)
+    def fromSave(cls, size: int, pokemon: bool, grid: list, obj_list: dict, current_pokemon: str, pokemon_status: int, active: bool=True):
+        bingo = cls(size, pokemon, active=active, new=False)
         bingo.grid = grid
-        bingo.grid_status = grid_status
+        bingo.list = obj_list
+        bingo.current_pokemon = current_pokemon
+        bingo.pokemon_status = pokemon_status
         return bingo
     
     def toDict(self) -> dict:
-        return {"list_file": self.list_file,
-                "size": self.size,
+        return {"size": self.size,
                 "pokemon": self.pokemon_bool,
                 "grid": self.grid,
-                "grid_status": self.grid_status}
+                "list": self.list,
+                "current_pokemon": self.current_pokemon,
+                "pokemon_status": self.pokemon_status}
 
-    def update_list(self, file: str) -> None:
+    def import_list(self, file: str) -> None:
         """
-        Reads in the csv file. Also used to update it.
+        Reads in the csv file.
         """
         with open(file, 'r') as f:
             reader = csv_reader(f, delimiter='µ')   # Just make sure the list doesn't have any 'µ' in it.
             for row in reader:
-                self.list.append(row[0])
-        self.list_file = file
+                self.list[row[0]] = 0
 
-    def populate(self, keep_unlocked: bool=False) -> None:
+    def export_list(self, file:str) -> None:
         """
-        Randomly populates the bingo with items from the list.
+        Exports the list to file.
         """
-        list_copy = []
-        for item in self.list:
-            list_copy.append(item)
+        with open(file, "w") as f:
+            for i, objective in enumerate(self.list):
+                if i < len(self.list)-1:
+                    f.write(objective+'\n')
+                else:
+                    f.write(objective)
 
+    def populate(self) -> None:
+        """
+        Randomly populates the bingo with items from the list that are not completed yet.
+        """
+        list_copy = deepcopy(self.list)
         self.grid = []
-        if not keep_unlocked:
-            self.grid_status = []
-
         for i in range(self.size):
             row = []
-            row_status = []
             for j in range(self.size):
                 if self.pokemon_bool and i == j and i == int(self.size/2):   # middle square
                     self.current_pokemon = self.pick_random_pokemon()
                     row.append(self.current_pokemon)
                 else:
-                    row.append(list_copy.pop(randint(0, len(list_copy)-1)))
-                if not keep_unlocked:
-                    row_status.append(0)
+                    key = random_choice(list(list_copy.keys()))
+                    while list_copy[key] != 0:
+                        list_copy.pop(key)
+                        key = random_choice(list(list_copy.keys()))
+                    list_copy.pop(key)
+                    row.append(key)
             self.grid.append(row)
-            self.grid_status.append(row_status)
+        self.pokemon_status = 0
 
     def import_pokemon_list(self, file: str) -> None:
         """
@@ -93,37 +101,26 @@ class Bingo:
         Shuffles the grid, but nothing gets added or deleted. Central pokemon stays.
         """
         grid_list = []
-        grid_status_list = []
-        pokemon = ""
-        pokemon_status = 0
         for i, row in enumerate(self.grid):
             for j, item in enumerate(row):
-                grid_list.append(item)
-                grid_status_list.append(self.grid_status[i][j])
-        if self.pokemon_bool:
-            pokemon = grid_list.pop(int((self.size**2)/2))
-            pokemon_status = grid_status_list.pop(int((self.size**2)/2))
+                if not (self.pokemon_bool and i == j and i == int(self.size/2)):
+                    grid_list.append(item)
         
         self.grid = []
-        self.grid_status = []
 
         for i in range(self.size):
             row = []
-            row_status = []
             for j in range(self.size):
                 if self.pokemon_bool and i == j and i == int(self.size/2):   # middle square
-                    row.append(pokemon)
-                    row_status.append(pokemon_status)
+                    row.append(self.current_pokemon)
                 else:
                     index = randint(0, len(grid_list)-1)
                     row.append(grid_list.pop(index))
-                    row_status.append(grid_status_list.pop(index))
             self.grid.append(row)
-            self.grid_status.append(row_status)
 
     def replace(self, i: int, j: int, random: bool, new_goal: str="") -> None:
         """
-        Replaces the cell at the given coordinates with either a random other objective from the list or a given one. The status is set to 0.
+        Replaces the cell at the given coordinates with either a random other uncompleted objective from the list or a given one. This new one gets added to the list.
         """
         if random:
             if self.pokemon_bool and i == j and i == int(self.size/2):   # middle square
@@ -132,7 +129,18 @@ class Bingo:
             else:
                 old_goal = self.grid[i][j]
                 new_goal = old_goal
-                while new_goal == old_goal:
-                    new_goal = self.list[randint(0, len(self.list)-1)]
-        self.grid[i][j] = new_goal
-        self.grid_status[i][j] = 0
+                while new_goal == old_goal or self.list[new_goal] == 1:
+                    new_goal = random_choice(list(self.list.keys()))
+        if new_goal:
+            if not new_goal in self.list:
+                # Add goal to list
+                self.list[new_goal] = 0
+            self.grid[i][j] = new_goal
+
+    def reset(self) -> None:
+        """
+        Resets the bingo. All objectives are reset to 0 and a new board is generated.
+        """
+        for key in self.list:
+            self.list[key] = 0
+        self.populate()
