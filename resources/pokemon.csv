@@ -1,36 +1,42 @@
 Bulbasaur
 Ivysaur
 Venusaur
+Venusaur Mega
 Charmander
 Charmeleon
 Charizard
+Charizard Mega X
+Charizard Mega Y
 Squirtle
 Wartortle
 Blastoise
+Blastoise Mega
 Caterpie
 Metapod
 Butterfree
 Weedle
 Kakuna
 Beedrill
+Beedrill Mega
 Pidgey
 Pidgeotto
 Pidgeot
+Pidgeot Mega
 Rattata
-Alolan Rattata
+Rattata Alolan
 Raticate
-Alolan Raticate
+Raticate Alolan
 Spearow
 Fearow
 Ekans
 Arbok
 Pikachu
 Raichu
-Alolan Raichu
+Raichu Alolan
 Sandshrew
-Alolan Sandshrew
+Sandshrew Alolan
 Sandslash
-Alolan Sandslash
+Sandslash Alolan
 Nidoran♀
 Nidorina
 Nidoqueen
@@ -40,9 +46,9 @@ Nidoking
 Clefairy
 Clefable
 Vulpix
-Alolan Vulpix
+Vulpix Alolan
 Ninetales
-Alolan Ninetales
+Ninetales Alolan
 Jigglypuff
 Wigglytuff
 Zubat
@@ -55,28 +61,29 @@ Parasect
 Venonat
 Venomoth
 Diglett
-Alolan Diglett
+Diglett Alolan
 Dugtrio
-Alolan Dugtrio
+Dugtrio Alolan
 Meowth
-Alolan Meowth
-Galarian Meowth
+Meowth Alolan
+Meowth Galarian
 Persian
-Alolan Persian
+Persian Alolan
 Psyduck
 Golduck
 Mankey
 Primeape
 Growlithe
-Hisuian Growlithe
+Growlithe Hisuian
 Arcanine
-Hisuian Arcanine
+Arcanine Hisuian
 Poliwag
 Poliwhirl
 Poliwrath
 Abra
 Kadabra
 Alakazam
+Alakazam Mega
 Machop
 Machoke
 Machamp
@@ -86,62 +93,65 @@ Victreebel
 Tentacool
 Tentacruel
 Geodude
-Alolan Geodude
+Geodude Alolan
 Graveler
-Alolan Graveler
+Graveler Alolan
 Golem
-Alolan Golem
+Golem Alolan
 Ponyta
-Galarian Ponyta
+Ponyta Galarian
 Rapidash
-Galarian Rapidash
+Rapidash Galarian
 Slowpoke
-Galarian Slowpoke
+Slowpoke Galarian
 Slowbro
-Galarian Slowbro
+Slowbro Mega
+Slowbro Galarian
 Magnemite
 Magneton
 Farfetch'd
-Galarian Farfetch'd
+Farfetch'd Galarian
 Doduo
 Dodrio
 Seel
 Dewgong
 Grimer
-Alolan Grimer
+Grimer Alolan
 Muk
-Alolan Muk
+Muk Alolan
 Shellder
 Cloyster
 Gastly
 Haunter
 Gengar
+Gengar Mega
 Onix
 Drowzee
 Hypno
 Krabby
 Kingler
 Voltorb
-Hisuian Voltorb
+Voltorb Hisuian
 Electrode
-Hisuian Electrode
+Electrode Hisuian
 Exeggcute
 Exeggutor
-Alolan Exeggutor
+Exeggutor Alolan
 Cubone
 Marowak
-Alolan Marowak
+Marowak Alolan
 Hitmonlee
 Hitmonchan
 Lickitung
 Koffing
 Weezing
-Galarian Weezing
+Weezing Galarian
 Rhyhorn
 Rhydon
 Chansey
 Tangela
 Kangaskhan
+Kangaskhan Mega
 Horsea
 Seadra
 Goldeen
@@ -149,18 +159,20 @@ Seaking
 Staryu
 Starmie
 Mr. Mime
-Galarian Mr. Mime
+Mr. Mime Galarian
 Scyther
 Jynx
 Electabuzz
 Magmar
 Pinsir
+Pinsir Mega
 Tauros
-Combat Breed Tauros
-Blaze Breed Tauros
-Aqua Breed Tauros
+Tauros Paldean Combat
+Tauros Paldean Blaze
+Tauros Paldean Aqua
 Magikarp
 Gyarados
+Gyarados Mega
 Lapras
 Ditto
 Eevee
@@ -173,17 +185,20 @@ Omastar
 Kabuto
 Kabutops
 Aerodactyl
+Aerodactyl Mega
 Snorlax
 Articuno
-Galarian Articuno
+Articuno Galarian
 Zapdos
-Galarian Zapdos
+Zapdos Galarian
 Moltres
-Galarian Moltres
+Moltres Galarian
 Dratini
 Dragonair
 Dragonite
 Mewtwo
+Mewtwo Mega X
+Mewtwo Mega Y
 Mew
 Chikorita
 Bayleef
@@ -191,7 +206,7 @@ Meganium
 Cyndaquil
 Quilava
 Typhlosion
-Hisuian Typhlosion
+Typhlosion Hisuian
 Totodile
 Croconaw
 Feraligatr
@@ -216,6 +231,7 @@ Xatu
 Mareep
 Flaaffy
 Ampharos
+Ampharos Mega
 Bellossom
 Marill
 Azumarill
@@ -229,13 +245,13 @@ Sunkern
 Sunflora
 Yanma
 Wooper
-Paldean Wooper
+Wooper Paldean
 Quagsire
 Espeon
 Umbreon
 Murkrow
 Slowking
-Galarian Slowking
+Slowking Galarian
 Misdreavus
 Unown
 Wobbuffet
@@ -245,15 +261,18 @@ Forretress
 Dunsparce
 Gligar
 Steelix
+Steelix Mega
 Snubbull
 Granbull
 Qwilfish
-Hisuian Qwilfish
+Qwilfish Hisuian
 Scizor
+Scizor Mega
 Shuckle
 Heracross
+Heracross Mega
 Sneasel
-Hisuian Sneasel
+Sneasel Hisuian
 Teddiursa
 Ursaring
 Slugma
@@ -261,7 +280,7 @@ Magcargo
 Swinub
 Piloswine
 Corsola
-Galarian Corsola
+Corsola Galarian
 Remoraid
 Octillery
 Delibird
@@ -269,6 +288,7 @@ Mantine
 Skarmory
 Houndour
 Houndoom
+Houndoom Mega
 Kingdra
 Phanpy
 Donphan
@@ -288,24 +308,28 @@ Suicune
 Larvitar
 Pupitar
 Tyranitar
+Tyranitar Mega
 Lugia
 Ho-oh
 Celebi
 Treecko
 Grovyle
 Sceptile
+Sceptile Mega
 Torchic
 Combusken
 Blaziken
+Blaziken Mega
 Mudkip
 Marshtomp
 Swampert
+Swampert Mega
 Poochyena
 Mightyena
 Zigzagoon
-Galarian Zigzagoon
+Zigzagoon Galarian
 Linoone
-Galarian Linoone
+Linoone Galarian
 Wurmple
 Silcoon
 Beautifly
@@ -324,6 +348,7 @@ Pelipper
 Ralts
 Kirlia
 Gardevoir
+Gardevoir Mega
 Surskit
 Masquerain
 Shroomish
@@ -344,14 +369,19 @@ Nosepass
 Skitty
 Delcatty
 Sableye
+Sableye Mega
 Mawile
+Mawile Mega
 Aron
 Lairon
 Aggron
+Aggron Mega
 Meditite
 Medicham
+Medicham Mega
 Electrike
 Manectric
+Manectric Mega
 Plusle
 Minun
 Volbeat
@@ -361,10 +391,12 @@ Gulpin
 Swalot
 Carvanha
 Sharpedo
+Sharpedo Mega
 Wailmer
 Wailord
 Numel
 Camerupt
+Camerupt Mega
 Torkoal
 Spoink
 Grumpig
@@ -376,6 +408,7 @@ Cacnea
 Cacturne
 Swablu
 Altaria
+Altaria Mega
 Zangoose
 Seviper
 Lunatone
@@ -393,20 +426,23 @@ Armaldo
 Feebas
 Milotic
 Castform
+Castform Sunny
+Castform Rainy
+Castform Snowy
 Kecleon
 Shuppet
 Banette
-Mega Banette
+Banette Mega
 Duskull
 Dusclops
 Tropius
 Chimecho
 Absol
-Mega Absol
+Absol Mega
 Wynaut
 Snorunt
 Glalie
-Mega Glalie
+Glalie Mega
 Spheal
 Sealeo
 Walrein
@@ -418,19 +454,29 @@ Luvdisc
 Bagon
 Shelgon
 Salamence
+Salamence Mega
 Beldum
 Metang
 Metagross
+Metagross Mega
 Regirock
 Regice
 Registeel
 Latias
+Latias Mega
 Latios
+Latios Mega
 Kyogre
+Kyogre Primal
 Groudon
+Groudon Primal
 Rayquaza
+Rayquaza Mega
 Jirachi
-Deoxys
+Deoxys Normal
+Deoxys Attack
+Deoxys Defense
+Deoxys Speed
 Turtwig
 Grotle
 Torterra
@@ -456,12 +502,12 @@ Cranidos
 Rampardos
 Shieldon
 Bastiodon
-Plant Cloak Burmy
-Sandy Cloak Burmy
-Trash Cloak Burmy
-Plant Cloak Wormadam
-Sandy Cloak Wormadam
-Trash Cloak Wormadam
+Burmy Plant
+Burmy Sandy
+Burmy Trash
+Wormadam Plant
+Wormadam Sandy
+Wormadam Trash
 Mothim
 Combee
 Vespiquen
@@ -477,6 +523,7 @@ Drifloon
 Drifblim
 Buneary
 Lopunny
+Lopunny Mega
 Mismagius
 Honchkrow
 Glameow
@@ -494,9 +541,11 @@ Spiritomb
 Gible
 Gabite
 Garchomp
+Garchomp Mega
 Munchlax
 Riolu
 Lucario
+Lucario Mega
 Hippopotas
 Hippowdon
 Skorupi
@@ -509,6 +558,7 @@ Lumineon
 Mantyke
 Snover
 Abomasnow
+Abomasnow Mega
 Weavile
 Magnezone
 Lickilicky
@@ -524,32 +574,33 @@ Gliscor
 Mamoswine
 Porygon-Z
 Gallade
+Gallade Mega
 Probopass
 Dusknoir
 Froslass
 Rotom
-Heat Rotom
-Wash Rotom
-Frost Rotom
-Fan Rotom
-Mow Rotom
+Rotom Heat
+Rotom Wash
+Rotom Frost
+Rotom Fan
+Rotom Mow
 Uxie
 Mesprit
 Azelf
 Dialga
-Origin Forme Dialga
+Dialga Origin
 Palkia
-Origin Forme Palkia
+Palkia Origin
 Heatran
 Regigigas
-Altered Forme Giratina
-Origin Forme Giratina
+Giratina Altered
+Giratina Origin
 Cresselia
 Phione
 Manaphy
 Darkrai
-Land Forme Shaymin
-Sky Forme Shaymin
+Shaymin Land
+Shaymin Sky
 Arceus
 Victini
 Snivy
@@ -561,7 +612,7 @@ Emboar
 Oshawott
 Dewott
 Samurott
-Hisuian Samurott
+Samurott Hisuian
 Patrat
 Watchog
 Lillipup
@@ -590,7 +641,7 @@ Swoobat
 Drilbur
 Excadrill
 Audino
-Mega Audino
+Audino Mega
 Timburr
 Gurdurr
 Conkeldurr
@@ -609,17 +660,19 @@ Cottonee
 Whimsicott
 Petilil
 Lilligant
-Hisuian Lilligant
-Red-Striped Form Basculin
-Blue-Striped Form Basculin
-White-Striped Form Basculin
+Lilligant Hisuian
+Basculin Red-Striped
+Basculin Blue-Striped
+Basculin White-Striped
 Sandile
 Krokorok
 Krookodile
 Darumaka
-Galarian Darumaka
-Darmanitan
-Galarian Darmanitan
+Darumaka Galarian
+Darmanitan Standard
+Darmanitan Zen
+Darmanitan Galarian Standard
+Darmanitan Galarian Zen
 Maractus
 Dwebble
 Crustle
@@ -627,7 +680,7 @@ Scraggy
 Scrafty
 Sigilyph
 Yamask
-Galarian Yamask
+Yamask Galarian
 Cofagrigus
 Tirtouga
 Carracosta
@@ -636,9 +689,9 @@ Archeops
 Trubbish
 Garbodor
 Zorua
-Hisuian Zorua
+Zorua Hisuian
 Zoroark
-Hisuian Zoroark
+Zoroark Hisuian
 Minccino
 Cinccino
 Gothita
@@ -686,7 +739,7 @@ Cryogonal
 Shelmet
 Accelgor
 Stunfisk
-Galarian Stunfisk
+Stunfisk Galarian
 Mienfoo
 Mienshao
 Druddigon
@@ -697,7 +750,7 @@ Bisharp
 Bouffalant
 Rufflet
 Braviary
-Hisuian Braviary
+Braviary Hisuian
 Vullaby
 Mandibuzz
 Heatmor
@@ -710,21 +763,21 @@ Volcarona
 Cobalion
 Terrakion
 Virizion
-Incarnate Forme Tornadus
-Therian Forme Tornadus
-Incarnate Forme Thundurus
-Therian Forme Thundurus
+Tornadus Incarnate
+Tornadus Therian
+Thundurus Incarnate
+Thundurus Therian
 Reshiram
 Zekrom
-Incarnate Forme Landorus
-Therian Forme Landorus
+Landorus Incarnate
+Landorus Therian
 Kyurem
-White Kyurem
-Black Kyurem
-Ordinary Form Keldeo
-Resolute Form Keldeo
-Aria Forme Meloetta
-Pirouette Forme Meloetta
+Kyurem White
+Kyurem Black
+Keldeo Ordinary
+Keldeo Resolute
+Meloetta Aria
+Meloetta Pirouette
 Genesect
 Chespin
 Quilladin
@@ -735,6 +788,7 @@ Delphox
 Froakie
 Frogadier
 Greninja
+Greninja Ash
 Bunnelby
 Diggersby
 Fletchling
@@ -754,11 +808,12 @@ Pancham
 Pangoro
 Furfrou
 Espurr
-Male Meowstic
-Female Meowstic
+Meowstic Male
+Meowstic Female
 Honedge
 Doublade
-Aegislash
+Aegislash Shield
+Aegislash Blade
 Spritzee
 Aromatisse
 Swirlix
@@ -783,32 +838,39 @@ Dedenne
 Carbink
 Goomy
 Sliggoo
-Hisuian Sliggoo
+Sliggoo Hisuian
 Goodra
-Hisuian Goodra
+Goodra Hisuian
 Klefki
 Phantump
 Trevenant
-Pumpkaboo
-Gourgeist
+Pumpkaboo Average
+Pumpkaboo Small
+Pumpkaboo Large
+Pumpkaboo Super
+Gourgeist Average
+Gourgeist Small
+Gourgeist Large
+Gourgeist Super
 Bergmite
 Avalugg
-Hisuian Avalugg
+Avalugg Hisuian
 Noibat
 Noivern
 Xerneas
 Yveltal
-50% Forme Zygarde
-10% Forme Zygarde
-Complete Forme Zygarde
+Zygarde 50% 
+Zygarde 10% 
+Zygarde Complete
 Diancie
-Confined Hoopa
-Unbound Hoopa
+Diancie Mega
+Hoopa Confined
+Hoopa Unbound
 Volcanion
 Rowlet
 Dartrix
 Decidueye
-Hisuian Decidueye
+Decidueye Hisuian
 Litten
 Torracat
 Incineroar
@@ -825,17 +887,18 @@ Charjabug
 Vikavolt
 Crabrawler
 Crabominable
-Baile Style Oricorio
-Pom-Pom Style Oricorio
-Pa'u Style Oricorio
-Sensu Style Oricorio
+Oricorio Baile
+Oricorio Pom-Pom
+Oricorio Pa'u
+Oricorio Sensu
 Cutiefly
 Ribombee
 Rockruff
-Midday Form Lycanroc
-Midnight Form Lycanroc
-Dusk Form Lycanroc
-Wishiwashi
+Lycanroc Midday
+Lycanroc Midnight
+Lycanroc Dusk
+Wishiwashi Solo
+Wishiwashi School
 Mareanie
 Toxapex
 Mudbray
@@ -863,7 +926,14 @@ Palossand
 Pyukumuku
 Type: Null
 Silvally
-Minior
+Minior Meteor
+Minior Bue Core
+Minior Green Core
+Minior Indigo Core
+Minior Orange Core
+Minior Red Core
+Minior Violet Core
+Minior Yellow Core
 Komala
 Turtonator
 Togedemaru
@@ -890,8 +960,9 @@ Celesteela
 Kartana
 Guzzlord
 Necrozma
-Dusk Mane Necrozma
-Dawn Wings Necrozma
+Necrozma Dusk Mane
+Necrozma Dawn Wings
+Necrozma Ultra
 Magearna
 Marshadow
 Poipole
@@ -940,8 +1011,8 @@ Cramorant
 Arrokuda
 Barraskewda
 Toxel
-Amped Form Toxtricity
-Low Key Form Toxtricity
+Toxtricity Amped
+Toxtricity Low Key
 Sizzlipede
 Centiskorch
 Clobbopus
@@ -967,10 +1038,12 @@ Pincurchin
 Snom
 Frosmoth
 Stonjourner
-Eiscue
-Male Indeedee
-Female Indeedee
-Morpeko
+Eiscue Ice
+Eiscue Noice
+Indeedee Male
+Indeedee Female
+Morpeko Full Belly Mode
+Morpeko Hangry Mode
 Cufant
 Copperajah
 Dracozolt
@@ -981,32 +1054,32 @@ Duraludon
 Dreepy
 Drakloak
 Dragapult
-Hero of Many Battles Zacian
-Crowned Sword Zacian
-Hero of Many Battles Zamazenta
-Crowned Shield Zamazenta
+Zacian Hero
+Zacian Crowned
+Zamazenta Hero
+Zamazenta Crowned
 Eternatus
 Kubfu
-Single Strike Style Urshifu
-Rapid Strike Style Urshifu
+Urshifu Single Strike
+Urshifu Rapid Strike
 Zarude
 Regieleki
 Regidrago
 Glastrier
 Spectrier
 Calyrex
-Ice Rider Calyrex
-Shadow Rider Calyrex
+Calyrex Ice Rider
+Calyrex Shadow Rider
 Wyrdeer
 Kleavor
 Ursaluna
-Bloodmoon Ursaluna
-Male Basculegion
-Female Basculegion
+Ursaluna Bloodmoon
+Basculegion Male
+Basculegion Female
 Sneasler
 Overqwil
-Incarnate Forme Enamorus
-Therian Forme Enamorus
+Enamorus Incarnate Forme
+Enamorus Therian Forme
 Sprigatito
 Floragato
 Meowscarada
@@ -1017,8 +1090,8 @@ Quaxly
 Quaxwell
 Quaquaval
 Lechonk
-Male Oinkologne
-Female Oinkologne
+Oinkologne Male
+Oinkologne Female
 Tarountula
 Spidops
 Nymble
@@ -1027,17 +1100,17 @@ Pawmi
 Pawmo
 Pawmot
 Tandemaus
-Family of Four Maushold
-Family of Three Maushold
+Maushold Family4
+Maushold Family3
 Fidough
 Dachsbun
 Smoliv
 Dolliv
 Arboliva
-Green Plumage Squawkabilly
-Blue Plumage Squawkabilly
-Yellow Plumage Squawkabilly
-White Plumage Squawkabilly
+Squawkabilly Green
+Squawkabilly Blue
+Squawkabilly Yellow
+Squawkabilly White
 Nacli
 Naclstack
 Garganacl
@@ -1070,7 +1143,8 @@ Wiglett
 Wugtrio
 Bombirdier
 Finizen
-Palafin
+Palafin Zero
+Palafin Hero
 Varoom
 Revavroom
 Cyclizar
@@ -1084,14 +1158,14 @@ Cetoddle
 Cetitan
 Veluza
 Dondozo
-Curly Form Tatsugiri
-Droopy Form Tatsugiri
-Stretchy Form Tatsugiri
+Tatsugiri Curly
+Tatsugiri Droopy
+Tatsugiri Stretchy
 Annihilape
 Clodsire
 Farigiraf
-Two-Segment Form Dudunsparce
-Three-Segment Form Dudunsparce
+Dudunsparce Two-Segment
+Dudunsparce Three-Segment
 Kingambit
 Great Tusk
 Scream Tail
@@ -1108,7 +1182,7 @@ Iron Thorns
 Frigibax
 Arctibax
 Baxcalibur
-Gimmighoul
+Gimmighoul Chest
 Gholdengo
 Wo-Chien
 Chien-Pao
@@ -1126,15 +1200,17 @@ Sinistcha
 Okidogi
 Munkidori
 Fezandipiti
-Teal Mask Ogerpon
-Wellspring Mask Ogerpon
-Hearthflame Mask Ogerpon
-Cornerstone Mask Ogerpon
+Ogerpon Teal
+Ogerpon Wellspring
+Ogerpon Hearthflame
+Ogerpon Cornerstone
 Archaludon
 Hydrapple
 Gouging Fire
 Raging Bolt
 Iron Boulder
 Iron Crown
-Terapagos
+Terapagos Normal
+Terapagos Terastal
+Terapagos Stellar
 Pecharunt

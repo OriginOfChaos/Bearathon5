@@ -1,13 +1,16 @@
 from copy import deepcopy
+from io import BytesIO
 from json import dump as json_dump, load as json_load
-from PySide6.QtCore import Qt
-from PySide6.QtGui import QAction, QIcon
+from PIL import Image
+from PySide6.QtCore import Qt, QSize
+from PySide6.QtGui import QAction, QIcon, QImage
 from PySide6.QtWidgets import (QMainWindow, QGroupBox, QFileDialog, QMenuBar, QMenu, QFormLayout,
                                 QPushButton, QSizePolicy, QGridLayout, QDialog, QDialogButtonBox,
                                 QSpinBox, QCheckBox, QLabel, QMessageBox, QToolBar, QLineEdit,
                                 QHBoxLayout, QWidget, QScrollArea, QVBoxLayout, QTabWidget, QComboBox,
                                 QRadioButton)
 from os import path as os_path
+from urllib import request
 
 from bingo import Bingo
 
@@ -31,6 +34,7 @@ class App(QMainWindow):
         self.setWindowTitle("Bearathon 5")
         self.central_widget = QGroupBox()
         self.bingo_layout = QGridLayout()
+        self.bingo_layout.setSpacing(0)
         self.central_widget.setLayout(self.bingo_layout)
         self.setCentralWidget(self.central_widget)
         self.createMenuBar()
@@ -229,6 +233,7 @@ class App(QMainWindow):
             if msg.exec() == QMessageBox.StandardButton.Yes:
                 self.prev_bingo = deepcopy(self.bingo)
                 self.bingo.populate()
+                self.save()
                 self.updateBingoUI()
 
     def toolReset(self):
@@ -267,28 +272,42 @@ class App(QMainWindow):
         for i in range(self.bingo.size):
             row = []
             for j in range(self.bingo.size):
-                square = QPushButton()
-                square.setSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
-                label = QLabel(self.bingo.grid[i][j], square)
-                label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-                label.setWordWrap(True)
-                squareLayout = QHBoxLayout(square)
-                squareLayout.addWidget(label)
-                square.clicked.connect(self.squarePress)
-                if not (self.bingo.pokemon_bool and i == j and i == int(self.bingo.size/2)):
-                    if self.bingo.list[self.bingo.grid[i][j]] == 1:
-                        square.setStyleSheet("background-color: green")
-                    else:
-                        square.setStyleSheet("")
-                else:
-                    if self.bingo.pokemon_status == 1:
-                        square.setStyleSheet("background-color: green")
-                    else:
-                        square.setStyleSheet("")
+                square = self.createSquare(i, j)
                 self.bingo_layout.addWidget(square, i, j)
                 row.append(square)
             self.bingo_squares.append(row)
         self.bingo_layout.update()
+
+    def createSquare(self, i: int, j: int) -> QPushButton:
+        square = QPushButton()
+        square.setMinimumSize(QSize(int(self.central_widget.size().width()/self.bingo.size)-10, int(self.central_widget.size().height()/self.bingo.size)-10))
+        square.setSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
+        square.clicked.connect(self.squarePress)
+        if not (self.bingo.pokemon_bool and i == j and i == int(self.bingo.size/2)):
+            label = QLabel(self.bingo.grid[i][j], square)
+            label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+            label.setWordWrap(True)
+            squareLayout = QHBoxLayout(square)
+            squareLayout.addWidget(label)
+            if self.bingo.list[self.bingo.grid[i][j]] == 1:
+                square.setStyleSheet("background-color: green")
+            else:
+                square.setStyleSheet("")
+        else:
+            try:
+                square.setIcon(self.getPokemonSprite(self.bingo.grid[i][j]))
+                square.setIconSize(square.size())
+            except Exception as e:
+                label = QLabel(self.bingo.grid[i][j]+"\n"+str(e)+"\n"+self.url, square)
+                label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+                label.setWordWrap(True)
+                squareLayout = QHBoxLayout(square)
+                squareLayout.addWidget(label)
+            if self.bingo.pokemon_status == 1:
+                square.setStyleSheet("background-color: green")
+            else:
+                square.setStyleSheet("")
+        return square
 
     def squarePress(self):
         sender = self.sender()
@@ -327,6 +346,18 @@ class App(QMainWindow):
                                 square.setStyleSheet("")
         self.save()
         self.bingo_layout.update()
+
+    def getPokemonSprite(self, pokemon: str="") -> QIcon:
+        pokemon_str = pokemon.lower()
+        pokemon_str = pokemon_str.replace(" ", "-")
+        pokemon_str = pokemon_str.replace("'", "")
+        pokemon_str = pokemon_str.replace("%", "")
+        pokemon_str = pokemon_str.replace(".", "")
+        self.url = "https://img.pokemondb.net/sprites/home/normal/" + pokemon_str + ".png"
+        response = request.urlopen(self.url)
+        img = Image.open(BytesIO(response.read()))
+        img = img.crop(img.getbbox())   # crop empty borders
+        return QIcon(img.toqpixmap())
 
 ##################
 # Custom dialogs #
