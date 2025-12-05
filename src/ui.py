@@ -299,7 +299,6 @@ class App(QMainWindow):
         font = QFont(self.settings["appearance"]["font"], self.settings["appearance"]["text_size"])
         font.setBold(self.settings["appearance"]["text_bold"])
         square = QPushButton()
-        square.setMinimumSize(QSize(int(self.central_widget.size().width()/self.bingo.size)-10, int(self.central_widget.size().height()/self.bingo.size)-10))
         square.setSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
         square.clicked.connect(self.squarePress)
         if not (self.bingo.pokemon_bool and i == j and i == int(self.bingo.size/2)):
@@ -319,6 +318,7 @@ class App(QMainWindow):
                 try:
                     square.setIcon(self.getPokemonSprite(self.bingo.grid[i][j]))
                     square.setIconSize(square.size())
+                    square.setMaximumSize(QSize(int(self.central_widget.size().width()/self.bingo.size)-10, int(self.central_widget.size().height()/self.bingo.size)-10))
                 except Exception as e:
                     label = QLabel(self.bingo.grid[i][j]+"\n"+str(e)+"\n"+self.url, square)
                     label.setAlignment(Qt.AlignmentFlag.AlignCenter)
@@ -665,7 +665,7 @@ class manageListDialog(QDialog):
         for key in self.form_dict:
             for idx in range(self.form_layout.rowCount()):
                 widgetItem = self.form_layout.itemAt(idx, QFormLayout.ItemRole.LabelRole)
-                if key == widgetItem.widget().text():
+                if key == widgetItem.widget().text(): # type: ignore
                     if text.lower() in key.lower():
                         self.form_layout.setRowVisible(idx, True)
                     else:
