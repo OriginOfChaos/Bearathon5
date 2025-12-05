@@ -1,13 +1,17 @@
 from copy import deepcopy
+from io import BytesIO
 from json import dump as json_dump, load as json_load
-from PySide6.QtCore import Qt
-from PySide6.QtGui import QAction, QIcon
+from PIL import Image
+from PySide6.QtCore import Qt, QSize
+from PySide6.QtGui import QAction, QIcon, QFontDatabase, QFont
 from PySide6.QtWidgets import (QMainWindow, QGroupBox, QFileDialog, QMenuBar, QMenu, QFormLayout,
                                 QPushButton, QSizePolicy, QGridLayout, QDialog, QDialogButtonBox,
                                 QSpinBox, QCheckBox, QLabel, QMessageBox, QToolBar, QLineEdit,
                                 QHBoxLayout, QWidget, QScrollArea, QVBoxLayout, QTabWidget, QComboBox,
                                 QRadioButton)
 from os import path as os_path
+from re import compile as re_compile, match as re_match
+from urllib import request
 
 from bingo import Bingo
 
@@ -15,6 +19,7 @@ class App(QMainWindow):
     def __init__(self):
         super().__init__()
 
+        self.importSettings()
         self.bingo = Bingo(0, False, False)
         self.prev_bingo = deepcopy(self.bingo)
         self.save_file = ""
@@ -31,6 +36,7 @@ class App(QMainWindow):
         self.setWindowTitle("Bearathon 5")
         self.central_widget = QGroupBox()
         self.bingo_layout = QGridLayout()
+        self.bingo_layout.setSpacing(0)
         self.central_widget.setLayout(self.bingo_layout)
         self.setCentralWidget(self.central_widget)
         self.createMenuBar()
@@ -50,10 +56,12 @@ class App(QMainWindow):
         # Create menus
         fileMenu = QMenu("&File", self)
         editMenu = QMenu("&Edit", self)
+        settingsMenu = QMenu("&Settings", self)
         
         # Add menus to menubar
         menuBar.addMenu(fileMenu)
         menuBar.addMenu(editMenu)
+        menuBar.addMenu(settingsMenu)
 
         # Create actions
         fileNew = QAction("&New", self)
@@ -66,6 +74,8 @@ class App(QMainWindow):
         editUndo.triggered.connect(self.editUndo)
         editManageList = QAction("&Manage Objectives List", self)
         editManageList.triggered.connect(self.editManageList)
+        settingsAppearance = QAction("&Appearance", self)
+        settingsAppearance.triggered.connect(self.settingsAppearance)
 
         # Add actions to menus
         fileMenu.addActions([fileNew,
@@ -73,6 +83,7 @@ class App(QMainWindow):
                              fileExport])
         editMenu.addActions([editUndo,
                              editManageList])
+        settingsMenu.addActions([settingsAppearance])
 
         self.setMenuBar(menuBar)
 
@@ -157,6 +168,16 @@ class App(QMainWindow):
                 self.bingo.list = dlg.output()
                 self.updateBingoUI()
 
+    def settingsAppearance(self):
+        """
+        Opens a dialog to change and save appearance settings.
+        """
+        dlg = appearanceDialog(self.settings)
+        if dlg.exec():
+            self.settings["appearance"] = dlg.output()
+            self.saveSettings()
+            self.updateBingoUI()
+
     ###########
     # Toolbar #
     ###########
@@ -206,7 +227,7 @@ class App(QMainWindow):
                 # visual cue that mode changed
                 for row in self.bingo_squares:
                     for square in row:
-                        square.setStyleSheet("background-color: red")
+                        square.setStyleSheet("background-color: " + self.settings["appearance"]["replace_color"])
                 self.bingo_layout.update()
 
     def toolNewPoke(self):
@@ -229,6 +250,7 @@ class App(QMainWindow):
             if msg.exec() == QMessageBox.StandardButton.Yes:
                 self.prev_bingo = deepcopy(self.bingo)
                 self.bingo.populate()
+                self.save()
                 self.updateBingoUI()
 
     def toolReset(self):
@@ -267,28 +289,57 @@ class App(QMainWindow):
         for i in range(self.bingo.size):
             row = []
             for j in range(self.bingo.size):
-                square = QPushButton()
-                square.setSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
-                label = QLabel(self.bingo.grid[i][j], square)
-                label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-                label.setWordWrap(True)
-                squareLayout = QHBoxLayout(square)
-                squareLayout.addWidget(label)
-                square.clicked.connect(self.squarePress)
-                if not (self.bingo.pokemon_bool and i == j and i == int(self.bingo.size/2)):
-                    if self.bingo.list[self.bingo.grid[i][j]] == 1:
-                        square.setStyleSheet("background-color: green")
-                    else:
-                        square.setStyleSheet("")
-                else:
-                    if self.bingo.pokemon_status == 1:
-                        square.setStyleSheet("background-color: green")
-                    else:
-                        square.setStyleSheet("")
+                square = self.createSquare(i, j)
                 self.bingo_layout.addWidget(square, i, j)
                 row.append(square)
             self.bingo_squares.append(row)
         self.bingo_layout.update()
+
+    def createSquare(self, i: int, j: int) -> QPushButton:
+        font = QFont(self.settings["appearance"]["font"], self.settings["appearance"]["text_size"])
+        font.setBold(self.settings["appearance"]["text_bold"])
+        square = QPushButton()
+        square.setMinimumSize(QSize(int(self.central_widget.size().width()/self.bingo.size)-10, int(self.central_widget.size().height()/self.bingo.size)-10))
+        square.setSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
+        square.clicked.connect(self.squarePress)
+        if not (self.bingo.pokemon_bool and i == j and i == int(self.bingo.size/2)):
+            label = QLabel(self.bingo.grid[i][j], square)
+            label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+            label.setWordWrap(True)
+            label.setFont(font)
+            label.setStyleSheet("color: " + self.settings["appearance"]["text_color"])
+            squareLayout = QHBoxLayout(square)
+            squareLayout.addWidget(label)
+            if self.bingo.list[self.bingo.grid[i][j]] == 1:
+                square.setStyleSheet("background-color: " + self.settings["appearance"]["complete_color"])
+            else:
+                square.setStyleSheet("")
+        else:
+            if self.settings["appearance"]["pokemon_sprite"]:
+                try:
+                    square.setIcon(self.getPokemonSprite(self.bingo.grid[i][j]))
+                    square.setIconSize(square.size())
+                except Exception as e:
+                    label = QLabel(self.bingo.grid[i][j]+"\n"+str(e)+"\n"+self.url, square)
+                    label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+                    label.setWordWrap(True)
+                    label.setFont(font)
+                    label.setStyleSheet("color: " + self.settings["appearance"]["text_color"])
+                    squareLayout = QHBoxLayout(square)
+                    squareLayout.addWidget(label)
+            else:
+                label = QLabel(self.bingo.grid[i][j], square)
+                label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+                label.setWordWrap(True)
+                label.setFont(font)
+                label.setStyleSheet("color: " + self.settings["appearance"]["text_color"])
+                squareLayout = QHBoxLayout(square)
+                squareLayout.addWidget(label)
+            if self.bingo.pokemon_status == 1:
+                square.setStyleSheet("background-color: " + self.settings["appearance"]["complete_color"])
+            else:
+                square.setStyleSheet("")
+        return square
 
     def squarePress(self):
         sender = self.sender()
@@ -314,19 +365,79 @@ class App(QMainWindow):
                         if not (self.bingo.pokemon_bool and i == j and i == int(self.bingo.size/2)):
                             if self.bingo.list[self.bingo.grid[i][j]] == 0:
                                 self.bingo.list[self.bingo.grid[i][j]] = 1
-                                square.setStyleSheet("background-color: green")
+                                square.setStyleSheet("background-color: " + self.settings["appearance"]["complete_color"])
                             elif self.bingo.list[self.bingo.grid[i][j]] == 1:
                                 self.bingo.list[self.bingo.grid[i][j]] = 0
                                 square.setStyleSheet("")
                         else:
                             if self.bingo.pokemon_status == 0:
                                 self.bingo.pokemon_status = 1
-                                square.setStyleSheet("background-color: green")
+                                square.setStyleSheet("background-color: " + self.settings["appearance"]["complete_color"])
                             elif self.bingo.pokemon_status == 1:
                                 self.bingo.pokemon_status = 0
                                 square.setStyleSheet("")
         self.save()
         self.bingo_layout.update()
+
+    def getPokemonSprite(self, pokemon: str="") -> QIcon:
+        pokemon_str = pokemon.lower()
+        pokemon_str = pokemon_str.replace(" ", "-")
+        pokemon_str = pokemon_str.replace("'", "")
+        pokemon_str = pokemon_str.replace("%", "")
+        pokemon_str = pokemon_str.replace(".", "")
+        self.url = "https://img.pokemondb.net/sprites/home/normal/" + pokemon_str + ".png"
+        response = request.urlopen(self.url)
+        img = Image.open(BytesIO(response.read()))
+        img = img.crop(img.getbbox())   # crop empty borders
+        return QIcon(img.toqpixmap())
+    
+    def importSettings(self):
+        try:
+            with open("resources/settings.json", 'r') as f:
+                data = json_load(f)
+            appearance = data["appearance"]
+            pokemon_sprite = appearance["pokemon_sprite"]   # check if all the necessary elements are there
+            complete_color = appearance["complete_color"] if self.hexCheck(appearance["complete_color"]) else "green"
+            replace_color = appearance["replace_color"] if self.hexCheck(appearance["replace_color"]) else "red"
+            text_font = appearance["font"]
+            text_size = appearance["text_size"]
+            text_bold = appearance["text_bold"]
+            text_color = appearance["text_color"]
+
+            self.settings = {"appearance": {"pokemon_sprite": pokemon_sprite,
+                                            "complete_color": complete_color,
+                                            "replace_color": replace_color,
+                                            "font": text_font,
+                                            "text_size": text_size,
+                                            "text_bold": text_bold,
+                                            "text_color": text_color}}
+        except:
+            self.settings = {"appearance": {"pokemon_sprite": True,
+                                            "complete_color": "#008000",
+                                            "replace_color": "#ff0000",
+                                            "font": QFontDatabase.SystemFont.GeneralFont.name,
+                                            "text_size": 10,
+                                            "text_bold": False,
+                                            "text_color": "#ffffff"}}
+            self.saveSettings()
+            msg = QMessageBox()
+            msg.setIcon(QMessageBox.Icon.Warning)
+            msg.setWindowTitle("Settings import error")
+            msg.setWindowIcon(QIcon("resources/icon.ico"))
+            msg.setText("Couldn't import settings. Default settings were used and saved.")
+            msg.exec()
+
+    def saveSettings(self):
+        try:
+            with open("resources/settings.json", 'w') as f:
+                json_dump(self.settings, f)
+        except:
+            with open("resources/settings.json", 'x') as f:
+                json_dump(self.settings, f)
+
+    def hexCheck(self, hex: str):
+        hexa_code = re_compile(r'^#([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$')
+        return bool(re_match(hexa_code, hex))
 
 ##################
 # Custom dialogs #
@@ -591,3 +702,83 @@ class manageListDialog(QDialog):
         for key in self.form_dict:
             output_dict[key] = self.form_dict[key].value()
         return output_dict
+    
+class appearanceDialog(QDialog):
+    def __init__(self, current_settings: dict):
+        super().__init__()
+
+        self.setWindowIcon(QIcon("resources/icon.ico"))
+        self.setWindowTitle("Manage Objectives")
+
+        buttonBox = QDialogButtonBox(QDialogButtonBox.StandardButton.Save | QDialogButtonBox.StandardButton.Cancel)
+        buttonBox.accepted.connect(self.accept)
+        buttonBox.rejected.connect(self.reject)
+
+        layout = QFormLayout(self)
+
+        current_app_settings = current_settings["appearance"]
+
+        self.pokemon_sprite = QCheckBox(self)
+        self.pokemon_sprite.setChecked(current_app_settings["pokemon_sprite"])
+        layout.addRow("Show Pokemon Sprite:", self.pokemon_sprite)
+        self.complete_color = QLineEdit(self)
+        self.complete_color.setText(current_app_settings["complete_color"])
+        self.completeColorChange()
+        self.complete_color.textChanged.connect(self.completeColorChange)
+        layout.addRow("Completed Objective Colour (hex):", self.complete_color)
+        self.replace_color = QLineEdit(self)
+        self.replace_color.setText(current_app_settings["replace_color"])
+        self.replaceColorChange()
+        self.replace_color.textChanged.connect(self.replaceColorChange)
+        layout.addRow("Replace Objective Colour (hex):", self.replace_color)
+        self.text_font = QComboBox(self)
+        self.text_font.setEditable(False)
+        self.text_font.addItems(QFontDatabase.families())
+        self.text_font.setCurrentText(current_app_settings["font"])
+        layout.addRow("Font", self.text_font)
+        self.text_size = QSpinBox(self)
+        self.text_size.setValue(current_app_settings["text_size"])
+        self.text_size.setMinimum(10)
+        self.text_size.setMaximum(50)
+        layout.addRow("Text size:", self.text_size)
+        self.text_bold = QCheckBox(self)
+        self.text_bold.setChecked(current_app_settings["text_bold"])
+        layout.addRow("Bold text:", self.text_bold)
+        self.text_color = QLineEdit(self)
+        self.text_color.setText(current_app_settings["text_color"])
+        self.textColorChange()
+        self.text_color.textChanged.connect(self.textColorChange)
+        layout.addRow("Text Colour (hex):", self.text_color)
+
+        layout.addWidget(buttonBox)
+        
+    def completeColorChange(self):
+        if self.hexCheck(self.complete_color.text()):
+            self.complete_color.setStyleSheet("background-color: " + self.complete_color.text())
+        else:
+            self.complete_color.setStyleSheet("background-color: #008000")
+
+    def replaceColorChange(self):
+        if self.hexCheck(self.replace_color.text()):
+            self.replace_color.setStyleSheet("background-color: " + self.replace_color.text())
+        else:
+            self.replace_color.setStyleSheet("background-color: #ff0000")
+
+    def textColorChange(self):
+        if self.hexCheck(self.text_color.text()):
+            self.text_color.setStyleSheet("background-color: " + self.text_color.text())
+        else:
+            self.text_color.setStyleSheet("background-color: #ffffff")
+
+    def hexCheck(self, hex: str):
+        hexa_code = re_compile(r'^#([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$')
+        return bool(re_match(hexa_code, hex))
+
+    def output(self) -> dict:
+        return {"pokemon_sprite": self.pokemon_sprite.isChecked(),
+                "complete_color": self.complete_color.text() if self.hexCheck(self.complete_color.text()) else "#008000",
+                "replace_color": self.replace_color.text() if self.hexCheck(self.replace_color.text()) else "#ff0000",
+                "font": self.text_font.currentText(),
+                "text_size": self.text_size.value(),
+                "text_bold": self.text_bold.isChecked(),
+                "text_color": self.text_color.text() if self.hexCheck(self.text_color.text()) else "#ffffff"}

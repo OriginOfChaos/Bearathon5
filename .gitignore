@@ -1,0 +1,5 @@
+resources/settings.json
+/src/__pycache__
+src/temp.py
+test.json
+THE LIST.csv
