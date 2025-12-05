@@ -3,7 +3,7 @@ from io import BytesIO
 from json import dump as json_dump, load as json_load
 from PIL import Image
 from PySide6.QtCore import Qt, QSize
-from PySide6.QtGui import QAction, QIcon, QImage
+from PySide6.QtGui import QAction, QIcon, QFontDatabase, QFont
 from PySide6.QtWidgets import (QMainWindow, QGroupBox, QFileDialog, QMenuBar, QMenu, QFormLayout,
                                 QPushButton, QSizePolicy, QGridLayout, QDialog, QDialogButtonBox,
                                 QSpinBox, QCheckBox, QLabel, QMessageBox, QToolBar, QLineEdit,
@@ -296,6 +296,8 @@ class App(QMainWindow):
         self.bingo_layout.update()
 
     def createSquare(self, i: int, j: int) -> QPushButton:
+        font = QFont(self.settings["appearance"]["font"], self.settings["appearance"]["text_size"])
+        font.setBold(self.settings["appearance"]["text_bold"])
         square = QPushButton()
         square.setMinimumSize(QSize(int(self.central_widget.size().width()/self.bingo.size)-10, int(self.central_widget.size().height()/self.bingo.size)-10))
         square.setSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
@@ -304,6 +306,8 @@ class App(QMainWindow):
             label = QLabel(self.bingo.grid[i][j], square)
             label.setAlignment(Qt.AlignmentFlag.AlignCenter)
             label.setWordWrap(True)
+            label.setFont(font)
+            label.setStyleSheet("color: " + self.settings["appearance"]["text_color"])
             squareLayout = QHBoxLayout(square)
             squareLayout.addWidget(label)
             if self.bingo.list[self.bingo.grid[i][j]] == 1:
@@ -319,12 +323,16 @@ class App(QMainWindow):
                     label = QLabel(self.bingo.grid[i][j]+"\n"+str(e)+"\n"+self.url, square)
                     label.setAlignment(Qt.AlignmentFlag.AlignCenter)
                     label.setWordWrap(True)
+                    label.setFont(font)
+                    label.setStyleSheet("color: " + self.settings["appearance"]["text_color"])
                     squareLayout = QHBoxLayout(square)
                     squareLayout.addWidget(label)
             else:
                 label = QLabel(self.bingo.grid[i][j], square)
                 label.setAlignment(Qt.AlignmentFlag.AlignCenter)
                 label.setWordWrap(True)
+                label.setFont(font)
+                label.setStyleSheet("color: " + self.settings["appearance"]["text_color"])
                 squareLayout = QHBoxLayout(square)
                 squareLayout.addWidget(label)
             if self.bingo.pokemon_status == 1:
@@ -391,14 +399,26 @@ class App(QMainWindow):
             pokemon_sprite = appearance["pokemon_sprite"]   # check if all the necessary elements are there
             complete_color = appearance["complete_color"] if self.hexCheck(appearance["complete_color"]) else "green"
             replace_color = appearance["replace_color"] if self.hexCheck(appearance["replace_color"]) else "red"
+            text_font = appearance["font"]
+            text_size = appearance["text_size"]
+            text_bold = appearance["text_bold"]
+            text_color = appearance["text_color"]
 
             self.settings = {"appearance": {"pokemon_sprite": pokemon_sprite,
                                             "complete_color": complete_color,
-                                            "replace_color": replace_color}}
+                                            "replace_color": replace_color,
+                                            "font": text_font,
+                                            "text_size": text_size,
+                                            "text_bold": text_bold,
+                                            "text_color": text_color}}
         except:
             self.settings = {"appearance": {"pokemon_sprite": True,
                                             "complete_color": "#008000",
-                                            "replace_color": "#ff0000"}}
+                                            "replace_color": "#ff0000",
+                                            "font": QFontDatabase.SystemFont.GeneralFont.name,
+                                            "text_size": 10,
+                                            "text_bold": False,
+                                            "text_color": "#ffffff"}}
             self.saveSettings()
             msg = QMessageBox()
             msg.setIcon(QMessageBox.Icon.Warning)
@@ -711,6 +731,24 @@ class appearanceDialog(QDialog):
         self.replaceColorChange()
         self.replace_color.textChanged.connect(self.replaceColorChange)
         layout.addRow("Replace Objective Colour (hex):", self.replace_color)
+        self.text_font = QComboBox(self)
+        self.text_font.setEditable(False)
+        self.text_font.addItems(QFontDatabase.families())
+        self.text_font.setCurrentText(current_app_settings["font"])
+        layout.addRow("Font", self.text_font)
+        self.text_size = QSpinBox(self)
+        self.text_size.setValue(current_app_settings["text_size"])
+        self.text_size.setMinimum(10)
+        self.text_size.setMaximum(50)
+        layout.addRow("Text size:", self.text_size)
+        self.text_bold = QCheckBox(self)
+        self.text_bold.setChecked(current_app_settings["text_bold"])
+        layout.addRow("Bold text:", self.text_bold)
+        self.text_color = QLineEdit(self)
+        self.text_color.setText(current_app_settings["text_color"])
+        self.textColorChange()
+        self.text_color.textChanged.connect(self.textColorChange)
+        layout.addRow("Text Colour (hex):", self.text_color)
 
         layout.addWidget(buttonBox)
         
@@ -718,13 +756,19 @@ class appearanceDialog(QDialog):
         if self.hexCheck(self.complete_color.text()):
             self.complete_color.setStyleSheet("background-color: " + self.complete_color.text())
         else:
-            self.complete_color.setStyleSheet("background-color: green")
+            self.complete_color.setStyleSheet("background-color: #008000")
 
     def replaceColorChange(self):
         if self.hexCheck(self.replace_color.text()):
             self.replace_color.setStyleSheet("background-color: " + self.replace_color.text())
         else:
-            self.replace_color.setStyleSheet("background-color: red")
+            self.replace_color.setStyleSheet("background-color: #ff0000")
+
+    def textColorChange(self):
+        if self.hexCheck(self.text_color.text()):
+            self.text_color.setStyleSheet("background-color: " + self.text_color.text())
+        else:
+            self.text_color.setStyleSheet("background-color: #ffffff")
 
     def hexCheck(self, hex: str):
         hexa_code = re_compile(r'^#([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$')
@@ -733,4 +777,8 @@ class appearanceDialog(QDialog):
     def output(self) -> dict:
         return {"pokemon_sprite": self.pokemon_sprite.isChecked(),
                 "complete_color": self.complete_color.text() if self.hexCheck(self.complete_color.text()) else "#008000",
-                "replace_color": self.replace_color.text() if self.hexCheck(self.replace_color.text()) else "#ff0000"}
+                "replace_color": self.replace_color.text() if self.hexCheck(self.replace_color.text()) else "#ff0000",
+                "font": self.text_font.currentText(),
+                "text_size": self.text_size.value(),
+                "text_bold": self.text_bold.isChecked(),
+                "text_color": self.text_color.text() if self.hexCheck(self.text_color.text()) else "#ffffff"}
